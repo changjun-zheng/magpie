@@ -160,8 +160,16 @@ func TestReadOpenCodeGo(t *testing.T) {
 	if ws[1].Name != "7 days" || ws[1].Used != 62 || ws[1].ResetsAt == nil || ws[1].ResetsAt.Day() != 28 {
 		t.Errorf("week: %+v", ws[1])
 	}
-	if ws[2].Name != "Month" || ws[2].Used != 100 {
+	if ws[2].Name != "Month" || ws[2].Used != 100 || ws[2].Span != 30*24*time.Hour {
 		t.Errorf("month: %+v", ws[2])
+	}
+	readAt := time.Date(2026, 9, 20, 0, 0, 0, 0, time.UTC)
+	start, end, ok := ws[2].Bounds(readAt)
+	if !ok || !start.Equal(time.Date(2026, 9, 11, 0, 0, 0, 0, time.UTC)) || !end.Equal(time.Date(2026, 10, 11, 0, 0, 0, 0, time.UTC)) {
+		t.Errorf("month bounds: %v %v %v", start, end, ok)
+	}
+	if _, ok := ws[2].Pace(readAt, readAt.Add(5*24*time.Hour)); !ok {
+		t.Error("month has no pace")
 	}
 	if _, _, err := readOpenCodeGo([]byte(`{"rollingUsage":{}}`)); err == nil {
 		t.Error("a reply of another shape reads as no windows, silently")

@@ -186,7 +186,7 @@ func readOpenCodeGo(b []byte) (string, []QuotaWindow, error) {
 	for _, x := range []struct {
 		key, name string
 		span      time.Duration
-	}{{"rolling", "5 hours", 5 * time.Hour}, {"weekly", "7 days", 7 * 24 * time.Hour}, {"monthly", "Month", 0}} {
+	}{{"rolling", "5 hours", 5 * time.Hour}, {"weekly", "7 days", 7 * 24 * time.Hour}, {"monthly", "Month", 30 * 24 * time.Hour}} {
 		w, ok := r.Usage[x.key]
 		if !ok || w.Percent == nil {
 			continue

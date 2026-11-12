@@ -23,6 +23,10 @@ func TestWindowPace(t *testing.T) {
 	if p, ok := (QuotaWindow{Name: "Weekly", Used: 50, ResetsAt: at(84 * time.Hour)}).Pace(now, now); !ok || math.Abs(p) > 1e-9 {
 		t.Errorf("weekly: %v %v", p, ok)
 	}
+	// "Month" alone, as OpenCode Go names its monthly window (#6094)
+	if p, ok := (QuotaWindow{Name: "Month", Used: 50, ResetsAt: at(15 * 24 * time.Hour)}).Pace(now, now); !ok || math.Abs(p) > 1e-9 {
+		t.Errorf("month by name: %v %v", p, ok)
+	}
 	// a reset given as seconds counts from when the card was read
 	readAt := now.Add(-time.Hour)
 	if p, ok := (QuotaWindow{Used: 50, ResetSecs: 5400, Span: 2 * time.Hour}).Pace(readAt, now); !ok || math.Abs(p+25) > 1e-9 {
